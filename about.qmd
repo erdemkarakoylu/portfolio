@@ -1,7 +1,6 @@
 ---
-title: "About Me"
+title: "Erdem Karakoylu"
 image: erdem_bodrum.jpg
-image-text: "Erdem Karakoylu"
 about:
   template: jolla
   links:

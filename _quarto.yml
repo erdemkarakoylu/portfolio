@@ -2,10 +2,18 @@ project:
   type: website
 
 website:
-  title: "Portfolio"
+  title: "My Portfolio"
   navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: projects.qmd
+        text: Projects and posts
+      - href: resume.qmd
+        text: My CV
     right:
-      - about.qmd
+      - text: "About Me"
+        href: about.qmd
       - icon: github
         href: https://github.com/
       - icon: twitter
