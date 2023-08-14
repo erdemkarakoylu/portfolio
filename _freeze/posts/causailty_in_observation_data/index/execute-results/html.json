@@ -1,0 +1,14 @@
+{
+  "hash": "37530de78f7cbad93acdec4402f95bfe",
+  "result": {
+    "markdown": "---\ntitle: \"Evaluating causality in observational data\"\nauthor: \"Erdem Karakoylu\"\ndate: \"2022-08-08\"\ncategories: [causality, causality, propensity score]\nimage: \"image.jpg\"\n---\n\n\n## Preamble: Causality in observational data\n\nEstablishing causality between an intervention, such as a treatment, and an outcome is best done under conditions where all possible factors that may affect the outcome can be controlled for; what is referred to as Randomized Control Trials (RCT.)\n\nEstablishing causal link in observational studies can be quite challenging. This is because there can be many potential confounders, not all of which might be identified. By confounder I mean \"a variable whose presence affects the variables being studied so that the results do not reflect the actual relationship\" ([*Pourhoseingholi et al. 2012*](https://pubmed.ncbi.nlm.nih.gov/24834204/)*.*)\n\nThis project illustrates the use of matching and propensity score to establish a causal link beween treatment and outcome in an observational study. The data comes from a study published by *Lalonde (1986)*; a pdf of which is available [here](https://www.researchgate.net/publication/4900843_Evaluating_the_Econometric_Evaluations_of_Training_Programs_with_Experiment_Data). The goal of the study was to evaluate the impact of an employment and training program. To establish\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(Matching)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nLoading required package: MASS\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\n## \n##  Matching (Version 4.10-8, Build Date: 2022-11-03)\n##  See http://sekhon.berkeley.edu/matching for additional documentation.\n##  Please cite software as:\n##   Jasjeet S. Sekhon. 2011. ``Multivariate and Propensity Score Matching\n##   Software with Automated Balance Optimization: The Matching package for R.''\n##   Journal of Statistical Software, 42(7): 1-52. \n##\n```\n:::\n:::\n\n\n### To match or not to match\n\nA commonly used metric to figure out whether balancing the data is required is Standardized Mean Difference ($SMD$), defined as the difference between group means divided by the pooled standard deviation, like so:\n\n$$\nSMD = \\frac{\\bar{X}_{treatment}-\\bar{X}_{control}}\n{\\sqrt{\\frac{s^2_{treatment}+s^2_{control}}{2}}}\n$$\n\nAn alternative would be to conduct two-sample t-tests to assess difference between group means for each covariate. and evaluate their corresponding p-value. This is however not without drawbacks; most importantly the resulting p-value will depend on the sample size.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
