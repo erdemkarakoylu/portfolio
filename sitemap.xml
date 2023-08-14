@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://erdemkarakoylu.github.io/portfolio/posts/post-with-code/index.html</loc>
-    <lastmod>2023-08-13T21:34:33.175Z</lastmod>
+    <loc>https://erdemkarakoylu.github.io/portfolio/resume.html</loc>
+    <lastmod>2023-08-14T17:52:53.837Z</lastmod>
   </url>
   <url>
     <loc>https://erdemkarakoylu.github.io/portfolio/posts/welcome/index.html</loc>
-    <lastmod>2023-08-13T21:34:33.393Z</lastmod>
+    <lastmod>2023-08-14T17:52:54.066Z</lastmod>
+  </url>
+  <url>
+    <loc>https://erdemkarakoylu.github.io/portfolio/posts/causailty_in_observation_data/index.html</loc>
+    <lastmod>2023-08-14T17:52:54.489Z</lastmod>
+  </url>
+  <url>
+    <loc>https://erdemkarakoylu.github.io/portfolio/projects.html</loc>
+    <lastmod>2023-08-14T17:52:54.811Z</lastmod>
   </url>
   <url>
     <loc>https://erdemkarakoylu.github.io/portfolio/index.html</loc>
-    <lastmod>2023-08-13T21:34:33.705Z</lastmod>
+    <lastmod>2023-08-14T17:52:55.102Z</lastmod>
   </url>
   <url>
     <loc>https://erdemkarakoylu.github.io/portfolio/about.html</loc>
-    <lastmod>2023-08-13T21:34:33.917Z</lastmod>
+    <lastmod>2023-08-14T17:52:55.341Z</lastmod>
   </url>
 </urlset>

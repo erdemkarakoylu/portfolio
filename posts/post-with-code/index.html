@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Harlow Malloc">
-<meta name="dcterms.date" content="2023-08-08">
+<meta name="author" content="Erdem Karakoylu">
+<meta name="dcterms.date" content="2022-08-08">
 
-<title>portfolio - Post With Code</title>
+<title>portfolio - Evaluating causality in observational data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -95,6 +95,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -141,11 +143,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Post With Code</h1>
+      <h1 class="title">Evaluating causality in observational data</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
-                <div class="quarto-category">code</div>
-                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">causality</div>
+                <div class="quarto-category">causality</div>
+                <div class="quarto-category">propensity score</div>
               </div>
                   </div>
   </div>
@@ -156,14 +158,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Harlow Malloc </p>
+               <p>Erdem Karakoylu </p>
             </div>
     </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">August 8, 2023</p>
+        <p class="date">August 8, 2022</p>
       </div>
     </div>
     
@@ -181,15 +183,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This is a post with executable code.</p>
+<section id="preamble-causality-in-observational-data" class="level2">
+<h2 class="anchored" data-anchor-id="preamble-causality-in-observational-data">Preamble: Causality in observational data</h2>
+<p>Establishing causality between an intervention, such as a treatment, and an outcome is best done under conditions where all possible factors that may affect the outcome can be controlled for; what is referred to as Randomized Control Trials (RCT.)</p>
+<p>Establishing causal link in observational studies can be quite challenging. This is because there are many potential confounders that can be hard or even impossible to control for and can therefore result in spurrious correlations.</p>
+<p>This project illustrates the use of matching and propensity score to establish a causal link between treatment and outcome in an observational study. The data comes from a study published by Lalonde (1986). The goal of the study was to evaluate the impact of an employment and training program. To establish</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matching);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: MASS</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>## 
+##  Matching (Version 4.10-8, Build Date: 2022-11-03)
+##  See http://sekhon.berkeley.edu/matching for additional documentation.
+##  Please cite software as:
+##   Jasjeet S. Sekhon. 2011. ``Multivariate and Propensity Score Matching
+##   Software with Automated Balance Optimization: The Matching package for R.''
+##   Journal of Statistical Software, 42(7): 1-52. 
+##</code></pre>
 </div>
 </div>
+<section id="to-match-or-not-to-match" class="level3">
+<h3 class="anchored" data-anchor-id="to-match-or-not-to-match">To match or not to match</h3>
+<p>A commonly used metric to figure out whether balancing the data is required is Standardized Mean Difference (<span class="math inline">\(SMD\)</span>)</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
