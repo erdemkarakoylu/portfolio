@@ -1,5 +1,5 @@
 ---
-title: "Some of my previous work..."
+title: "Some of my work..."
 listing: 
   contents: posts
   sort: "date desc"
