@@ -11,4 +11,4 @@ page-layout: full
 title-block-banner: true
 ---
 
-This site is meant to help those - including me! - that need a different take on a technical topic of interest. The site is also meant to educate and entertain with entries Statistics, Data Science, Modeling in a variety of fields. If you dig deep enough, you'll even fine some entries on Marine Ecology Modeling; for such was my journey.
+This site is meant to help those - including me! - that need a different take on a technical topic of interest. The site is also meant to educate and entertain with entries Statistics, Data Science, Modeling in a variety of fields. If you dig deep enough, you'll even fine some entries on Marine Ecology Modeling; for such was my journey. Enjoy, and by all means do leave a comment. Regardless of its polarity I find feedback a useful improvement tool.
