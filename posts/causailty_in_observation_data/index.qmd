@@ -7,8 +7,7 @@ image: "effect-1.webp"
 ---
 
 ## Preamble: Causality in observational data
-
-Establishing causality between an intervention, such as a treatment, and an outcome is best done under conditions where all possible factors that may affect the outcome can be controlled for; what is referred to as Randomized Control Trials (RCT.)
+This post illustrates some ways of inferring causality in observational data. Establishing causality of a treatment or similar intervention is more easily done under conditions where all possible factors that may affect the outcome can be controlled for; what is referred to as Randomized Control Trials (RCT.)
 
 Establishing causal link in observational studies can be quite challenging. This is because there can be many potential confounders, not all of which might be identified. By confounder I mean "a variable whose presence affects the variables being studied so that the results do not reflect the actual relationship" ([*Pourhoseingholi et al. 2012*](https://pubmed.ncbi.nlm.nih.gov/24834204/)*.*)
 
@@ -50,11 +49,12 @@ mydata<-cbind(age, black, white, educ, nodegree, married,
               re74, re75, treat, outcome)
 mydata<-data.frame(mydata)
 ```
-All covariates are expected to be confounders. Thus it is important to evaluate whether the data is balanced between treatment and control groups; i.e. whether the covariates are similarly distributed between the two groups. If they are then the analysis can proceed. Otherwise, the data needs to be balanced via matching or propensity score
+All covariates are expected to be confounders. Thus it is important to evaluate whether the data is balanced between treatment and control groups; i.e. whether the covariates are similarly distributed between the two groups. If they are then the analysis can proceed. Otherwise, the data needs to be balanced. One way to balance data is to use *matching*; another will use something called propensity score. Next, I will illustrate both appraoches.
 
-### To match or not to match
+## Matching
+### To match or not to match?
 
-A commonly used metric to figure out whether balancing the data is required is Standardized Mean Difference ($SMD$), defined as the difference between group means divided by the pooled standard deviation, like so:
+A first step is whether the data on hand is appropriate for causal inferrence, in particular, whether it should be balanced. A commonly used metric to figure out whether balancing the data is required is Standardized Mean Difference ($SMD$), defined as the difference between group means divided by the pooled standard deviation, like so:
 
 $$
 SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
@@ -65,20 +65,17 @@ An easy way to examine covariates is to cast them into what is know as a `Table 
 library(tableone)
 
 # Make a vector of the variable names to be used
-xvars <- c("black", "white", "age","educ","married","nodegree",
-           "re74", "re75")
+xvars <- c("age", "black", "white", "educ", "nodegree", "married", 
+              "re74", "re75", "treat", "outcome")
 # load to a table 1
-table1 <- CreateTableOne(vars=xvars, strata="treat", data=mydata)
+table1 <- CreateTableOne(vars=xvars, strata="treat", data=mydata, test=FALSE)
 
 # show table, in particular display SMDs corresponding to each covariate. 
 print(table1, smd=TRUE)
 ```
+Note that an alternative would be to conduct two-tailed t-tests to assess difference between group means for each covariate, and evaluate their corresponding p-value. This is however not without drawbacks; most importantly the resulting p-value will depend on the sample size.
 
 
 
-```{r}
-
-```
-An alternative would be to conduct two-tailed t-tests to assess difference between group means for each covariate, and evaluate their corresponding p-value. This is however not without drawbacks; most importantly the resulting p-value will depend on the sample size.
 
 
