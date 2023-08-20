@@ -361,7 +361,7 @@ SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">mean</span>(treated_outcome) <span class="sc">-</span> <span class="fu">mean</span>(control_outcome), <span class="at">digits=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 173.05</code></pre>
+<pre><code>[1] 83.58</code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -377,20 +377,22 @@ SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
     One Sample t-test
 
 data:  diff_outcome
-t = 0.25262, df = 184, p-value = 0.8008
+t = 0.12251, df = 184, p-value = 0.9026
 alternative hypothesis: true mean is not equal to 0
 95 percent confidence interval:
- -1178.404  1524.494
+ -1262.519  1429.685
 sample estimates:
 mean of x 
- 173.0453 </code></pre>
+ 83.58295 </code></pre>
 </div>
 </div>
 <p>A p-value of .92 suggests the difference is not significant.</p>
 </section>
 </section>
-<section id="propensity-scores" class="level2">
-<h2 class="anchored" data-anchor-id="propensity-scores">Propensity scores</h2>
+<section id="propensity-score-matching" class="level2">
+<h2 class="anchored" data-anchor-id="propensity-score-matching">Propensity score matching</h2>
+<p>A propensity score denoted here <span class="math inline">\(\pi\)</span> is defined as the probability that a subject <span class="math inline">\(i\)</span> received treatment conditioned on the covariates <span class="math inline">\(X\)</span>. I.e. <span class="math inline">\(\pi_i = P(T=1|X_i)\)</span>. A <span class="math inline">\(\pi_i=0.4\)</span> means there’s a 40% chance the corresponding subject will receive treatment. Covariates can increase or decrease the probability of receiving treatment. For example, if <span class="math inline">\(X\)</span>, simplistically the only covariate, is a boolean variable for smoking and smokers are more likely to get a particular treatment then <span class="math inline">\(P(T=1|X=1) \gt P(T=1|X=0)\)</span>.</p>
+<p>Interestingly, two subjects may have the same propensity score in spite of having different covariate values <span class="math inline">\(X\)</span>, meaning they are equally likely to receive treatment. Thus reducing the data to a subset of subjects with the same <span class="math inline">\(\pi\)</span> should balance the treated and control groups. In doing so a crucial assumption in causality, <em>ignorability</em> i.e.&nbsp;how a subject ended in one or the other group can be safely ignored. In a randomized trial, the propensity score is known. In an observational study <span class="math inline">\(\pi\)</span> is unknown. However because both <span class="math inline">\(X\)</span> and <span class="math inline">\(T\)</span> are collected, <span class="math inline">\(\pi\)</span> can be estimated.</p>
 
 
 </section>
