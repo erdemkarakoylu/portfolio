@@ -205,7 +205,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matching)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(lalonde)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
@@ -260,7 +260,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#hispan&lt;-as.numeric(lalonde$race=='hispan.')</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hispan<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(lalonde<span class="sc">$</span>race<span class="sc">==</span><span class="st">'hispan'</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>black<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(lalonde<span class="sc">$</span>race<span class="sc">==</span><span class="st">'black'</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>white<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(lalonde<span class="sc">$</span>race<span class="sc">==</span><span class="st">'white'</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>age<span class="ot">&lt;-</span>lalonde<span class="sc">$</span>age</span>
@@ -271,7 +271,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>re75<span class="ot">&lt;-</span>lalonde<span class="sc">$</span>re75</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>treat<span class="ot">&lt;-</span>lalonde<span class="sc">$</span>treat</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>outcome<span class="ot">&lt;-</span>lalonde<span class="sc">$</span>re78</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>mydata<span class="ot">&lt;-</span><span class="fu">cbind</span>(age, black, white, educ, nodegree, married, </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>mydata<span class="ot">&lt;-</span><span class="fu">cbind</span>(age, educ, married, nodegree, black, white, hispan, </span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>              re74, re75, treat, outcome)</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>mydata<span class="ot">&lt;-</span><span class="fu">data.frame</span>(mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -293,37 +293,106 @@ SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tableone)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a vector of the variable names to be used</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>xvars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"black"</span>, <span class="st">"white"</span>, <span class="st">"educ"</span>, <span class="st">"nodegree"</span>, <span class="st">"married"</span>, </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"re74"</span>, <span class="st">"re75"</span>, <span class="st">"treat"</span>, <span class="st">"outcome"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>xvars <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"hispan"</span>, <span class="st">"black"</span>, <span class="st">"white"</span>, <span class="st">"age"</span>, <span class="st">"educ"</span>, <span class="st">"married"</span>, <span class="st">"nodegree"</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"re74"</span>, <span class="st">"re75"</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># load to a table 1</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> <span class="fu">CreateTableOne</span>(<span class="at">vars=</span>xvars, <span class="at">strata=</span><span class="st">"treat"</span>, <span class="at">data=</span>mydata, <span class="at">test=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> <span class="fu">CreateTableOne</span>(<span class="at">vars=</span>xvars, <span class="at">strata=</span><span class="st">"treat"</span>, <span class="at">data=</span>mydata, <span class="at">test=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># show table, in particular display SMDs corresponding to each covariate. </span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(table1, <span class="at">smd=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in ModuleReturnVarsExist(vars, data): The data frame does not have:
-black white nodegree Dropped</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Stratified by treat
+                       0                 1                 SMD   
+  n                        429               185                 
+  hispan (mean (SD))      0.14 (0.35)       0.06 (0.24)     0.277
+  black (mean (SD))       0.20 (0.40)       0.84 (0.36)     1.668
+  white (mean (SD))       0.66 (0.48)       0.10 (0.30)     1.406
+  age (mean (SD))        28.03 (10.79)     25.82 (7.16)     0.242
+  educ (mean (SD))       10.24 (2.86)      10.35 (2.01)     0.045
+  married (mean (SD))     0.51 (0.50)       0.19 (0.39)     0.719
+  nodegree (mean (SD))    0.60 (0.49)       0.71 (0.46)     0.235
+  re74 (mean (SD))     5619.24 (6788.75) 2095.57 (4886.62)  0.596
+  re75 (mean (SD))     2466.48 (3292.00) 1532.06 (3219.25)  0.287</code></pre>
+</div>
+</div>
+<p>Note that an alternative would be to conduct two-tailed t-tests to assess difference between group (treated and control) means for each covariate, and evaluate their corresponding p-value. This is however not without drawbacks; most importantly the resulting p-value will depend on the sample size. I therefore use <span class="math inline">\(SMD\)</span> in this post.</p>
+<p>By convention, an <span class="math inline">\(SMD\)</span> greater than 0.1 suggest an imbalance with respect to the corresponding covariate. Here <span class="math inline">\(SMD&gt;0.1\)</span> for all covariates except <em>education</em>. Treated subjects need each to be match via greedy matching to as close as possible a control subject. Matching between subjects is done on the basis of a distance metric indicating how separated they are in the covariate space. The specific metric used in this case is the <strong>Mahalanobis distance</strong>, which is a kind of standardized difference, computed as follows: <span class="math display">\[d = \sqrt{(X_i-X_j)^T C^{-1} (X_i-X_j) }\]</span> where <span class="math inline">\(X\)</span> is a covariate, <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are treated and control subjects, and <span class="math inline">\(C\)</span> is the covariance matrix</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matching)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Below M=1 refers to pairwise matching. Even so if "ties" is left as TRUE (default)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># multiple subjects within the tolerance threshold will all be matched. </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># In this case, e.g. not setting ties=TRUE yields 207 pairs, even though there are only # 185 treated subjects.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>greedymatch<span class="ot">&lt;-</span><span class="fu">Match</span>(<span class="at">Tr=</span>treat, <span class="at">M=</span><span class="dv">1</span>, <span class="at">X=</span>mydata[xvars], <span class="at">ties=</span><span class="cn">FALSE</span>) </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>matched<span class="ot">&lt;-</span>mydata[<span class="fu">unlist</span>(greedymatch[<span class="fu">c</span>(<span class="st">"index.treated"</span>, <span class="st">"index.control"</span>)]), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>I create another <em>Table 1</em> with the matched data check the SMDs.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>matchedtab1<span class="ot">&lt;-</span><span class="fu">CreateTableOne</span>(<span class="at">vars=</span>xvars, <span class="at">strata=</span><span class="st">"treat"</span>, <span class="at">data=</span>matched, <span class="at">test=</span><span class="cn">FALSE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(matchedtab1, <span class="at">smd=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Stratified by treat
+                       0                 1                 SMD   
+  n                        185               185                 
+  hispan (mean (SD))      0.06 (0.24)       0.06 (0.24)    &lt;0.001
+  black (mean (SD))       0.84 (0.37)       0.84 (0.36)     0.015
+  white (mean (SD))       0.10 (0.30)       0.10 (0.30)     0.018
+  age (mean (SD))        25.36 (8.29)      25.82 (7.16)     0.059
+  educ (mean (SD))       10.45 (1.96)      10.35 (2.01)     0.054
+  married (mean (SD))     0.19 (0.39)       0.19 (0.39)    &lt;0.001
+  nodegree (mean (SD))    0.71 (0.46)       0.71 (0.46)    &lt;0.001
+  re74 (mean (SD))     2159.92 (4240.18) 2095.57 (4886.62)  0.014
+  re75 (mean (SD))     1119.08 (2442.29) 1532.06 (3219.25)  0.145</code></pre>
+</div>
+</div>
+<p>Greedy pairwise matching yields, as expected, a reduced data set with 185 subjects in each group. This time all but the variable <span class="math inline">\(re75\)</span> have corresponding <span class="math inline">\(SMD&lt;0.1\)</span>. This is not entirely satisfactory and I will attempt to balance the data set using propensity scores next. Before doing so, however, I do a quick outcome analysis and compare the means of the two groups.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Outcome Analysis:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Carry a paired t-test on the matched data to get a causal risk difference</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>treated_outcome<span class="ot">&lt;-</span>matched<span class="sc">$</span>outcome[matched<span class="sc">$</span>treat<span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>control_outcome<span class="ot">&lt;-</span>matched<span class="sc">$</span>outcome[matched<span class="sc">$</span>treat<span class="sc">==</span><span class="dv">0</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">mean</span>(treated_outcome) <span class="sc">-</span> <span class="fu">mean</span>(control_outcome), <span class="at">digits=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 173.05</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show table, in particular display SMDs corresponding to each covariate. </span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(table1, <span class="at">smd=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#pairwise difference</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>diff_outcome <span class="ot">=</span> treated_outcome <span class="sc">-</span> control_outcome</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#paired t-test</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(diff_outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>                     Stratified by treat
-                      0                 1                 SMD   
-  n                       260               185                 
-  age (mean (SD))       25.05 (7.06)      25.82 (7.16)     0.107
-  educ (mean (SD))      10.09 (1.61)      10.35 (2.01)     0.141
-  married (mean (SD))    0.15 (0.36)       0.19 (0.39)     0.094
-  re74 (mean (SD))    2107.03 (5687.91) 2095.57 (4886.62)  0.002
-  re75 (mean (SD))    1266.91 (3102.98) 1532.06 (3219.25)  0.084
-  treat (mean (SD))      0.00 (0.00)       1.00 (0.00)       Inf
-  outcome (mean (SD)) 4554.80 (5483.84) 6349.15 (7867.40)  0.265</code></pre>
+<pre><code>
+    One Sample t-test
+
+data:  diff_outcome
+t = 0.25262, df = 184, p-value = 0.8008
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ -1178.404  1524.494
+sample estimates:
+mean of x 
+ 173.0453 </code></pre>
 </div>
 </div>
-<p>Note that an alternative would be to conduct two-tailed t-tests to assess difference between group means for each covariate, and evaluate their corresponding p-value. This is however not without drawbacks; most importantly the resulting p-value will depend on the sample size.</p>
-
-
+<p>A p-value of .92 suggests the difference is not significant.</p>
 </section>
+</section>
+<section id="propensity-scores" class="level2">
+<h2 class="anchored" data-anchor-id="propensity-scores">Propensity scores</h2>
+
+
 </section>
 
 </main> <!-- /main -->
