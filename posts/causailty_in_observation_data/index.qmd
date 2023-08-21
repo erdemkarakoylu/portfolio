@@ -116,7 +116,41 @@ A p-value of .92 suggests the difference is not significant.
 A propensity score denoted here $\pi$ is defined as the probability that a subject $i$ received treatment  conditioned on the covariates $X$. I.e. $\pi_i = P(T=1|X_i)$. A $\pi_i=0.4$ means there's a 40% chance the corresponding subject will receive treatment. Covariates can increase or decrease the probability of receiving treatment. For example, if $X$, simplistically the only covariate, is a boolean variable for smoking and smokers are more likely to get a particular treatment then $P(T=1|X=1) \gt P(T=1|X=0)$.  
 
 Interestingly, two subjects may have the same propensity score in spite of having different covariate values $X$, meaning they are equally likely to receive treatment. Thus reducing the data to a subset of subjects with the same $\pi$ should balance the treated and control groups. In doing so a crucial assumption in causality, *ignorability* i.e. how a subject ended in one or the other group can be safely ignored.
-In a randomized trial, the propensity score is known. In an observational study $\pi$ is unknown. However because both $X$ and $T$ are collected, $\pi$ can be estimated.
+In a randomized trial, the propensity score is known. In an observational study $\pi$ is unknown. However because both $X$ and $T$ are collected, $\pi$ can be estimated. For this I will use a logistic regression model where the covariates are the input and the output is the probability of a subject having received treatment. 
 
+```{r}
+psmodel <- glm(treat~hispan+white+black+age+educ+married+
+                 nodegree+re74+re75,family=binomial(), data=mydata)
+```
+The model fit is summarized below.
 
+```{r}
+# show fit summary
+summary(psmodel)
+```
+Next I extract the propensity scores from the model object.
+```{r}
+# create propensity score
+pscore<-psmodel$fitted.values
+```
+Finally, I use the MatchIt package to match subjects based on their propensity scores. Note that I set a seed for reproducibility, since matching randomizes data as a first step.
+```{r}
+set.seed(42)
+m.out<-matchit(treat~hispan+white+black+age+educ+married+
+                 nodegree+re74+re75, data=mydata, method="nearest")
+```
 
+The matching results are summarized below.
+```{r}
+# summarize the matching outcome
+summary(m.out)
+```
+The figures below also illustrate the matching outcome.
+```{r, message=FALSE}
+# propensity score plots
+plot(m.out, type="hist")
+```
+The jitter plot below shows the overlap between matched groups.
+```{r, message=FALSE}
+plot(m.out, type="jitter")
+```
