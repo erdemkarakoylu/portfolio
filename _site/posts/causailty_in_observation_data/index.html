@@ -325,14 +325,14 @@ SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># multiple subjects within the tolerance threshold will all be matched. </span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># In this case, e.g. not setting ties=TRUE yields 207 pairs, even though there are only # 185 treated subjects.</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>greedymatch<span class="ot">&lt;-</span><span class="fu">Match</span>(<span class="at">Tr=</span>treat, <span class="at">M=</span><span class="dv">1</span>, <span class="at">X=</span>mydata[xvars], <span class="at">ties=</span><span class="cn">FALSE</span>) </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>matched<span class="ot">&lt;-</span>mydata[<span class="fu">unlist</span>(greedymatch[<span class="fu">c</span>(<span class="st">"index.treated"</span>, <span class="st">"index.control"</span>)]), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>greedymatched<span class="ot">&lt;-</span>mydata[<span class="fu">unlist</span>(greedymatch[<span class="fu">c</span>(<span class="st">"index.treated"</span>, <span class="st">"index.control"</span>)]), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>I create another <em>Table 1</em> with the matched data check the SMDs.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>matchedtab1<span class="ot">&lt;-</span><span class="fu">CreateTableOne</span>(<span class="at">vars=</span>xvars, <span class="at">strata=</span><span class="st">"treat"</span>, <span class="at">data=</span>matched, <span class="at">test=</span><span class="cn">FALSE</span>)</span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>matchedtab1<span class="ot">&lt;-</span><span class="fu">CreateTableOne</span>(<span class="at">vars=</span>xvars, <span class="at">strata=</span><span class="st">"treat"</span>, <span class="at">data=</span>greedymatched, <span class="at">test=</span><span class="cn">FALSE</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(matchedtab1, <span class="at">smd=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -356,12 +356,12 @@ SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Outcome Analysis:</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Carry a paired t-test on the matched data to get a causal risk difference</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>treated_outcome<span class="ot">&lt;-</span>matched<span class="sc">$</span>outcome[matched<span class="sc">$</span>treat<span class="sc">==</span><span class="dv">1</span>]</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>control_outcome<span class="ot">&lt;-</span>matched<span class="sc">$</span>outcome[matched<span class="sc">$</span>treat<span class="sc">==</span><span class="dv">0</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>treated_outcome<span class="ot">&lt;-</span>greedymatched<span class="sc">$</span>outcome[greedymatched<span class="sc">$</span>treat<span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>control_outcome<span class="ot">&lt;-</span>greedymatched<span class="sc">$</span>outcome[greedymatched<span class="sc">$</span>treat<span class="sc">==</span><span class="dv">0</span>]</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">mean</span>(treated_outcome) <span class="sc">-</span> <span class="fu">mean</span>(control_outcome), <span class="at">digits=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 89.28</code></pre>
+<pre><code>[1] 108.59</code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -377,13 +377,13 @@ SMD = \frac{\bar{X}_{treatment}-\bar{X}_{control}}
     One Sample t-test
 
 data:  diff_outcome
-t = 0.13174, df = 184, p-value = 0.8953
+t = 0.15926, df = 184, p-value = 0.8736
 alternative hypothesis: true mean is not equal to 0
 95 percent confidence interval:
- -1247.709  1426.265
+ -1236.710  1453.895
 sample estimates:
 mean of x 
- 89.27819 </code></pre>
+ 108.5925 </code></pre>
 </div>
 </div>
 <p>A p-value of .92 suggests the difference is not significant.</p>
@@ -392,7 +392,7 @@ mean of x
 <section id="propensity-score-matching" class="level2">
 <h2 class="anchored" data-anchor-id="propensity-score-matching">Propensity score matching</h2>
 <p>A propensity score denoted here <span class="math inline">\(\pi\)</span> is defined as the probability that a subject <span class="math inline">\(i\)</span> received treatment conditioned on the covariates <span class="math inline">\(X\)</span>. I.e. <span class="math inline">\(\pi_i = P(T=1|X_i)\)</span>. A <span class="math inline">\(\pi_i=0.4\)</span> means there’s a 40% chance the corresponding subject will receive treatment. Covariates can increase or decrease the probability of receiving treatment. For example, if <span class="math inline">\(X\)</span>, simplistically the only covariate, is a boolean variable for smoking and smokers are more likely to get a particular treatment then <span class="math inline">\(P(T=1|X=1) \gt P(T=1|X=0)\)</span>.</p>
-<p>Interestingly, two subjects may have the same propensity score in spite of having different covariate values <span class="math inline">\(X\)</span>, meaning they are equally likely to receive treatment. Thus reducing the data to a subset of subjects with the same <span class="math inline">\(\pi\)</span> should balance the treated and control groups. In doing so a crucial assumption in causality, <em>ignorability</em> i.e.&nbsp;how a subject ended in one or the other group can be safely ignored. In a randomized trial, the propensity score is known. In an observational study <span class="math inline">\(\pi\)</span> is unknown. However because both <span class="math inline">\(X\)</span> and <span class="math inline">\(T\)</span> are collected, <span class="math inline">\(\pi\)</span> can be estimated. For this I will use a logistic regression model where the covariates are the input and the output is the probability of a subject having received treatment.</p>
+<p>Interestingly, two subjects may have the same propensity score in spite of having different covariate values <span class="math inline">\(X\)</span>, meaning they are equally likely to receive treatment. Thus reducing the data to a subset of subjects with the same <span class="math inline">\(\pi\)</span> should balance the treated and control groups. In doing so a crucial assumption in causality, <em>ignorability</em> i.e.&nbsp;how a subject ended in one or the other group can be safely ignored. In a randomized trial, the propensity score is known. In an observational study <span class="math inline">\(\pi\)</span> is unknown. However because both <span class="math inline">\(X\)</span> and <span class="math inline">\(T\)</span> are collected, <span class="math inline">\(\pi\)</span> can be estimated. For this I will fit a logistic regression, where the covariates are the input and the treatment variable is the output. Using this model I can get the predicted probability of treatment for each subject; i.e.&nbsp;the estimated <span class="math inline">\(\pi\)</span>.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -534,21 +534,43 @@ Discarded       0       0</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The jitter plot below shows the overlap between matched groups.</p>
+<p>What I am looking for with the plot above is an improvement in the overlap between the distribution of propensity scores of matched control and treated groups, relative to the raw. There is obviously some improvement and I’ll next check more concretely below how good the match is using SMD.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m.out, <span class="at">type=</span><span class="st">"jitter"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --&gt; MATCHHING WITH &amp; WITHOUT A CALIPER</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Matching without a caliper</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># -&gt; do greedy matching on logit (PS)</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#logit&lt;-qlogis</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>psmatch <span class="ot">&lt;-</span> <span class="fu">Match</span>(<span class="at">Tr=</span>mydata<span class="sc">$</span>treat, <span class="at">M=</span><span class="dv">1</span>, <span class="at">X=</span>pscore, <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>matched <span class="ot">&lt;-</span> mydata[<span class="fu">unlist</span>(psmatch[<span class="fu">c</span>(<span class="st">"index.treated"</span>, <span class="st">"index.control"</span>)]), ]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>matchedtab1_pscore <span class="ot">&lt;-</span> <span class="fu">CreateTableOne</span>(<span class="at">vars=</span>xvars, <span class="at">strata=</span><span class="st">"treat"</span>, <span class="at">data=</span>matched,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>                              <span class="at">test=</span><span class="cn">FALSE</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(matchedtab1_pscore, <span class="at">smd=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
-</div>
 <div class="cell-output cell-output-stdout">
-<pre><code>To identify the units, use first mouse button; to stop, use second.</code></pre>
+<pre><code>                      Stratified by treat
+                       0                 1                 SMD   
+  n                        185               185                 
+  hispan (mean (SD))      0.21 (0.41)       0.06 (0.24)     0.453
+  black (mean (SD))       0.47 (0.50)       0.84 (0.36)     0.852
+  white (mean (SD))       0.32 (0.47)       0.10 (0.30)     0.566
+  age (mean (SD))        25.34 (10.53)     25.82 (7.16)     0.053
+  educ (mean (SD))       10.59 (2.63)      10.35 (2.01)     0.106
+  married (mean (SD))     0.21 (0.41)       0.19 (0.39)     0.041
+  nodegree (mean (SD))    0.64 (0.48)       0.71 (0.46)     0.139
+  re74 (mean (SD))     2455.47 (4352.86) 2095.57 (4886.62)  0.078
+  re75 (mean (SD))     1731.45 (2813.88) 1532.06 (3219.25)  0.066</code></pre>
 </div>
 </div>
+<p>The table above shows marked improvement relative to the raw data. However, variables like <em>education</em> (<span class="math inline">\(educ\)</span>) and <em>lack of high school degree</em> (<span class="math inline">\(nodegree\)</span>) are marginal, while race-related variables (<span class="math inline">\(hispan\)</span>, <span class="math inline">\(black\)</span>, <span class="math inline">\(white\)</span>) are still too high to safely avoid confounding. Overall it is quite a bit worse than the first attempt with greedy matching I did earlier using the Mahalanobis distance; though <span class="math inline">\(re75\)</span> is markedly better here.</p>
+<section id="using-calipers" class="level3">
+<h3 class="anchored" data-anchor-id="using-calipers">Using calipers</h3>
+<p>One way to try to improve on the matching is to use a caliper; i.e.&nbsp;a minimum threshold beyond which matching is not allowed.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

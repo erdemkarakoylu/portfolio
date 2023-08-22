@@ -84,13 +84,13 @@ library(Matching)
 # multiple subjects within the tolerance threshold will all be matched. 
 # In this case, e.g. not setting ties=TRUE yields 207 pairs, even though there are only # 185 treated subjects.
 greedymatch<-Match(Tr=treat, M=1, X=mydata[xvars], ties=FALSE) 
-matched<-mydata[unlist(greedymatch[c("index.treated", "index.control")]), ]
+greedymatched<-mydata[unlist(greedymatch[c("index.treated", "index.control")]), ]
 ```
 
 I create another *Table 1* with the matched data check the SMDs.
 
 ```{r}
-matchedtab1<-CreateTableOne(vars=xvars, strata="treat", data=matched, test=FALSE)
+matchedtab1<-CreateTableOne(vars=xvars, strata="treat", data=greedymatched, test=FALSE)
 print(matchedtab1, smd=TRUE)
 ```
 Greedy pairwise matching yields, as expected, a reduced data set with 185 subjects in each group. This time all but the variable $re75$ have corresponding $SMD<0.1$. This is not entirely satisfactory and I will attempt to balance the data set using propensity scores next. Before doing so, however, I do a quick outcome analysis and compare the means of the two groups.
@@ -98,8 +98,8 @@ Greedy pairwise matching yields, as expected, a reduced data set with 185 subjec
 ```{r}
 # Outcome Analysis:
 # Carry a paired t-test on the matched data to get a causal risk difference
-treated_outcome<-matched$outcome[matched$treat==1]
-control_outcome<-matched$outcome[matched$treat==0]
+treated_outcome<-greedymatched$outcome[greedymatched$treat==1]
+control_outcome<-greedymatched$outcome[greedymatched$treat==0]
 round(mean(treated_outcome) - mean(control_outcome), digits=2)
 
 #pairwise difference
@@ -116,7 +116,7 @@ A p-value of .92 suggests the difference is not significant.
 A propensity score denoted here $\pi$ is defined as the probability that a subject $i$ received treatment  conditioned on the covariates $X$. I.e. $\pi_i = P(T=1|X_i)$. A $\pi_i=0.4$ means there's a 40% chance the corresponding subject will receive treatment. Covariates can increase or decrease the probability of receiving treatment. For example, if $X$, simplistically the only covariate, is a boolean variable for smoking and smokers are more likely to get a particular treatment then $P(T=1|X=1) \gt P(T=1|X=0)$.  
 
 Interestingly, two subjects may have the same propensity score in spite of having different covariate values $X$, meaning they are equally likely to receive treatment. Thus reducing the data to a subset of subjects with the same $\pi$ should balance the treated and control groups. In doing so a crucial assumption in causality, *ignorability* i.e. how a subject ended in one or the other group can be safely ignored.
-In a randomized trial, the propensity score is known. In an observational study $\pi$ is unknown. However because both $X$ and $T$ are collected, $\pi$ can be estimated. For this I will use a logistic regression model where the covariates are the input and the output is the probability of a subject having received treatment. 
+In a randomized trial, the propensity score is known. In an observational study $\pi$ is unknown. However because both $X$ and $T$ are collected, $\pi$ can be estimated. For this I will fit a logistic regression, where the covariates are the input and the treatment variable is the output. Using this model I can get the predicted probability of treatment for each subject; i.e. the estimated $\pi$.
 
 ```{r}
 psmodel <- glm(treat~hispan+white+black+age+educ+married+
@@ -141,7 +141,7 @@ m.out<-matchit(treat~hispan+white+black+age+educ+married+
 ```
 
 The matching results are summarized below.
-```{r}
+```{r, message=FALSE}
 # summarize the matching outcome
 summary(m.out)
 ```
@@ -150,7 +150,21 @@ The figures below also illustrate the matching outcome.
 # propensity score plots
 plot(m.out, type="hist")
 ```
-The jitter plot below shows the overlap between matched groups.
-```{r, message=FALSE}
-plot(m.out, type="jitter")
+What I am looking for with the plot above is an improvement in the overlap between the distribution of propensity scores of matched control and treated groups, relative to the raw. There is obviously some improvement and I'll next check more concretely below how good the match is using SMD.
+```{r}
+# --> MATCHHING WITH & WITHOUT A CALIPER
+# Matching without a caliper
+# -> do greedy matching on logit (PS)
+set.seed(42)
+#logit<-qlogis
+psmatch <- Match(Tr=mydata$treat, M=1, X=pscore, replace=FALSE)
+matched <- mydata[unlist(psmatch[c("index.treated", "index.control")]), ]
+matchedtab1_pscore <- CreateTableOne(vars=xvars, strata="treat", data=matched,
+                              test=FALSE)
+print(matchedtab1_pscore, smd=TRUE)
 ```
+
+The table above shows marked improvement relative to the raw data. However, variables like *education* ($educ$) and *lack of high school degree* ($nodegree$) are marginal, while race-related variables ($hispan$, $black$, $white$) are still too high to safely avoid confounding. Overall it is quite a bit worse than the first attempt with greedy matching I did earlier using the Mahalanobis distance; though $re75$ is markedly better here.
+
+### Using calipers
+One way to try to improve on the matching is to use a caliper; i.e. a minimum threshold beyond which matching is not allowed.
