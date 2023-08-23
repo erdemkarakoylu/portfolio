@@ -166,5 +166,20 @@ print(matchedtab1_pscore, smd=TRUE)
 
 The table above shows marked improvement relative to the raw data. However, variables like *education* ($educ$) and *lack of high school degree* ($nodegree$) are marginal, while race-related variables ($hispan$, $black$, $white$) are still too high to safely avoid confounding. Overall it is quite a bit worse than the first attempt with greedy matching I did earlier using the Mahalanobis distance; though $re75$ is markedly better here.
 
-### Using calipers
-One way to try to improve on the matching is to use a caliper; i.e. a minimum threshold beyond which matching is not allowed.
+### Matching with a caliper
+One way to try to improve on the matching is to use a caliper; i.e. a threshold (maximum) distance beyond which matching is not allowed. In practice, though somewhat arbitrarily, (1) the propensity scores are logit-transformed, (2) the standard deviation (SD) is calculated, and (3) the caliper is set to 0.2 times the SD, finally (4) the matching is performed subject to the caliper. A smaller caliper, which results in fewer but better pairs, trades more variance for less bias. The code below performs the aforementioned steps.
+
+```{r}
+set.seed(42)
+logit_pscore = qlogis(pscore)
+psmatch_calip <-Match(Tr=mydata$treat, M=1, X=logit_pscore, replace=FALSE,
+                caliper=.2)
+# Note that the caliper is in St.Dev. units
+matched_calip <- mydata[unlist(psmatch_calip[c("index.treated", "index.control")]), ]
+matchedtab1_calip <- CreateTableOne(vars=xvars, strata="treat", data=matched_calip,
+                              test=FALSE)
+print(matchedtab1_calip, smd=TRUE)
+# NOTE the smaller number of subjects for each treatment categories, resultng
+# from dropping previously matched subjects.
+```
+Using the caliper has reduced the number of matched pairs down to 114. The high SMDs seen previously (without the caliper). However, for 1974 and 1975 real incomes $SMD > 0.1$. Thus I cannot be certain that the treatment is the only cause of the outcome. The table above suggests subjects' earning history is still a factor.
