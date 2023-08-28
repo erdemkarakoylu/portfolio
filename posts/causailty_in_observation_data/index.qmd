@@ -7,7 +7,7 @@ image: "effect-1.webp"
 ---
 
 ## Preamble: Causality in observational data
-This post illustrates some ways of inferring causality in observational data. Establishing causality of a treatment or similar intervention is more easily done under conditions where all possible factors that may affect the outcome can be controlled for; what is referred to as Randomized Control Trials (RCT.)
+This post illustrates some ways of inferring causality in observational data. Establishing causality of a treatment or similar intervention is more easily done under laboratory conditions where all possible factors that may be a cause of the outcome can be controlled for, also known as is referred to as Randomized Control Trials (RCT.)
 
 Establishing causal link in observational studies can be quite challenging. This is because there can be many potential confounders, not all of which might be identified. By confounder I mean "a variable whose presence affects the variables being studied so that the results do not reflect the actual relationship" ([*Pourhoseingholi et al. 2012*](https://pubmed.ncbi.nlm.nih.gov/24834204/)*.*)
 
@@ -93,23 +93,9 @@ I create another *Table 1* with the matched data check the SMDs.
 matchedtab1<-CreateTableOne(vars=xvars, strata="treat", data=greedymatched, test=FALSE)
 print(matchedtab1, smd=TRUE)
 ```
-Greedy pairwise matching yields, as expected, a reduced data set with 185 subjects in each group. This time all but the variable $re75$ have corresponding $SMD<0.1$. This is not entirely satisfactory and I will attempt to balance the data set using propensity scores next. Before doing so, however, I do a quick outcome analysis and compare the means of the two groups.
-
-```{r}
-# Outcome Analysis:
-# Carry a paired t-test on the matched data to get a causal risk difference
-treated_outcome<-greedymatched$outcome[greedymatched$treat==1]
-control_outcome<-greedymatched$outcome[greedymatched$treat==0]
-round(mean(treated_outcome) - mean(control_outcome), digits=2)
-
-#pairwise difference
-diff_outcome = treated_outcome - control_outcome
+Greedy pairwise matching yields, as expected, a reduced data set with 185 subjects in each group. This time all but the variable $re75$ have corresponding $SMD<0.1$. This is not entirely satisfactory and I will attempt to balance the data set using propensity scores next 
 
 
-#paired t-test
-t.test(diff_outcome)
-```
-A p-value of .92 suggests the difference is not significant. 
 
 ## Propensity score matching
 
@@ -145,7 +131,7 @@ The matching results are summarized below.
 # summarize the matching outcome
 summary(m.out)
 ```
-The figures below also illustrate the matching outcome.
+The above is more intuitively approached with some plotting as shown below.
 ```{r, message=FALSE}
 # propensity score plots
 plot(m.out, type="hist")
@@ -156,10 +142,9 @@ What I am looking for with the plot above is an improvement in the overlap betwe
 # Matching without a caliper
 # -> do greedy matching on logit (PS)
 set.seed(42)
-#logit<-qlogis
 psmatch <- Match(Tr=mydata$treat, M=1, X=pscore, replace=FALSE)
-matched <- mydata[unlist(psmatch[c("index.treated", "index.control")]), ]
-matchedtab1_pscore <- CreateTableOne(vars=xvars, strata="treat", data=matched,
+ps_matched <- mydata[unlist(psmatch[c("index.treated", "index.control")]), ]
+matchedtab1_pscore <- CreateTableOne(vars=xvars, strata="treat", data=ps_matched,
                               test=FALSE)
 print(matchedtab1_pscore, smd=TRUE)
 ```
@@ -182,4 +167,48 @@ print(matchedtab1_calip, smd=TRUE)
 # NOTE the smaller number of subjects for each treatment categories, resultng
 # from dropping previously matched subjects.
 ```
-Using the caliper has reduced the number of matched pairs down to 114. The high SMDs seen previously (without the caliper). However, for 1974 and 1975 real incomes $SMD > 0.1$. Thus I cannot be certain that the treatment is the only cause of the outcome. The table above suggests subjects' earning history is still a factor.
+Using the caliper has reduced the number of matched pairs down to 114. The high SMDs seen previously (without the caliper). However, for 1974 and 1975 real incomes $SMD > 0.1$. Thus I cannot be certain that the treatment is the only cause of the outcome. The table above suggests subjects' earning history is still a causal factor.
+With this in mind, I next run an outcome analysis for all the approaches described previously. I do this at the end rather than after each outcome as a habit to prevent [p-hacking](https://en.wikipedia.org/wiki/Data_dredging).
+
+### Outcome analyses:
+To analyze whether the difference in outcome between the treatment and the control groups are different, I run a paired t-test on the various matched data. But first a quick function to avoid some repetition.
+
+```{r}
+# function that accepts a matched data table and runs the paired t-test.
+run_matched_ttest<- function(matched_table){
+  # get outcome data for both groups
+  treated_outcome <- matched_table$outcome[matched_table$treat==1]
+  control_outcome <- matched_table$outcome[matched_table$treat==0]
+  
+  # compute pairwise difference between both groups
+  diff_outcome <- treated_outcome - control_outcome
+  
+  # paired t-test
+  t.test(diff_outcome)
+}
+```
+
+$\rightarrow$ Greedy Mahalanobis distance matching:
+```{r}
+run_matched_ttest(greedymatched)
+```
+
+$\rightarrow$ Propensity score matching (no caliper)
+```{r}
+run_matched_ttest(ps_matched)
+```
+
+$\rightarrow$ Propensity score matching with caliper
+```{r}
+run_matched_ttest(matched_calip)
+```
+Thus, from greedy Mahalanobis distance matching to propensity score matching with caliper, the statistical significance of the difference between groups does increase, with propensity score matching with caliper resulting the in the smallest p-value (0.20). This is still conventionally quite high, so that it is impossible to reject the null hypothesis, i.e. that there are no difference between the groups. Moreover, there is still a potential confounding problem in all cases. E.g. the SMD for real income in \`74 and \`75 remains above 0.1 suggesting I was not able to remove the confounding effect. Note though that I worked for a subset of the original data. Thus I would next re-run the analysis on the entire data set, which could lead to better matching. But that is a story for another day.
+
+Peaceful coding!
+
+<p align="center">
+  <img src="coding_happy.png" height=400>
+</p>
+<p align="center">
+  [image source](https://cdn.discordapp.com/attachments/1008571061119483984/1105921557945131071/Intotheblue_under_water_photo_of_a_women_using_a_mac_laptop_a_p_2c7f5b5a-6e17-4f48-bd5c-669b7685d2d3.png)
+</p>
