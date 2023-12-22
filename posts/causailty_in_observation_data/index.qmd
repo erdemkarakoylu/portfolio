@@ -1,6 +1,6 @@
 ---
 title: "Evaluating causality in observational data"
-author: "Erdem Karakoylu"
+author: "Erdem Karaköylü"
 date: "2022-08-08"
 categories: [causality, propensity score, R]
 image: "effect-1.webp"
