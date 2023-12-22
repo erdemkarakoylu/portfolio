@@ -1,5 +1,5 @@
 ---
-title: "Erdem Karakoylu"
+title: "Erdem Karaköylü"
 image: erdem_bodrum.jpg
 about:
   template: jolla
